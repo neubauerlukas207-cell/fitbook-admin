@@ -1,0 +1,29 @@
+@model CustomerForm
+@{ ViewData["Title"] = "Nový zákazník"; }
+
+<h1 class="h3 mb-4">Nový zákazník</h1>
+
+<form asp-action="Create" method="post" class="card card-body" style="max-width:520px">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label"></label>
+        <input asp-for="Name" class="form-control" autofocus />
+        <span asp-validation-for="Name" class="text-danger small"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Email" class="form-label"></label>
+        <input asp-for="Email" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger small"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Phone" class="form-label"></label>
+        <input asp-for="Phone" class="form-control" />
+        <span asp-validation-for="Phone" class="text-danger small"></span>
+    </div>
+    <div>
+        <button type="submit" class="btn btn-fitbook">Uložit</button>
+        <a asp-action="Index" class="btn btn-link">Zpět</a>
+    </div>
+</form>
+
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

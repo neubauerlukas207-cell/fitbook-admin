@@ -1,0 +1,44 @@
+@model MembershipPlan
+@{ ViewData["Title"] = Model.Id == 0 ? "Nová permanentka" : "Úprava permanentky"; }
+
+<h1 class="h3 mb-4">@ViewData["Title"]</h1>
+
+<form asp-action="Save" method="post" class="card card-body" style="max-width:520px">
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="IsActive" />
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger small"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Kind" class="form-label"></label>
+        <select asp-for="Kind" class="form-select">
+            <option value="@PlanKind.Unlimited">Neomezená</option>
+            <option value="@PlanKind.Entries">Na vstupy</option>
+        </select>
+    </div>
+    <div class="row">
+        <div class="col mb-3">
+            <label asp-for="ValidityDays" class="form-label"></label>
+            <input asp-for="ValidityDays" class="form-control" />
+            <span asp-validation-for="ValidityDays" class="text-danger small"></span>
+        </div>
+        <div class="col mb-3">
+            <label asp-for="Entries" class="form-label"></label>
+            <input asp-for="Entries" class="form-control" />
+            <span asp-validation-for="Entries" class="text-danger small"></span>
+        </div>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Price" class="form-label"></label>
+        <input asp-for="Price" class="form-control" />
+        <span asp-validation-for="Price" class="text-danger small"></span>
+    </div>
+    <div>
+        <button type="submit" class="btn btn-fitbook">Uložit</button>
+        <a asp-action="Index" class="btn btn-link">Zpět</a>
+    </div>
+</form>
+
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

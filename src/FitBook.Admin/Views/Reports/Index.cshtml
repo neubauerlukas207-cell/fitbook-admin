@@ -1,0 +1,28 @@
+@model IReadOnlyList<MonthRevenue>
+@{
+    ViewData["Title"] = "Tržby";
+    var max = Math.Max(1m, Model.Max(m => m.Revenue));
+    var culture = System.Globalization.CultureInfo.GetCultureInfo("cs-CZ");
+}
+
+<h1 class="h3 mb-4">Tržby za posledních @Model.Count měsíců</h1>
+
+<div class="card card-body">
+    @foreach (var m in Model)
+    {
+        var name = culture.DateTimeFormat.GetMonthName(m.Month);
+        <div class="d-flex align-items-center mb-2">
+            <div style="width:120px">@name @m.Year</div>
+            <div class="flex-grow-1 me-3">
+                <div class="progress" style="height:22px" role="progressbar" aria-valuenow="@m.Revenue" aria-valuemax="@max">
+                    <div class="progress-bar bg-fitbook" style="width:@((int)(100 * m.Revenue / max))%"></div>
+                </div>
+            </div>
+            <div style="width:170px" class="text-end">
+                <strong>@m.Revenue.ToString("N0") Kč</strong>
+                <span class="text-muted small">(@m.Sold×)</span>
+            </div>
+        </div>
+    }
+    <div class="border-top pt-2 mt-2 text-end">Celkem <strong>@Model.Sum(m => m.Revenue).ToString("N0") Kč</strong></div>
+</div>

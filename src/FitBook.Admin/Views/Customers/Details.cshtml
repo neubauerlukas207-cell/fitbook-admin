@@ -1,0 +1,66 @@
+@model CustomerDetailViewModel
+@inject BusinessClock Clock
+@{
+    var c = Model.Customer;
+    ViewData["Title"] = c.Name;
+}
+
+<div class="d-flex justify-content-between align-items-start mb-4">
+    <div>
+        <h1 class="h3 mb-1">@c.Name</h1>
+        <div class="text-muted">@c.Email @(c.Phone is null ? "" : " · " + c.Phone)</div>
+    </div>
+    <form asp-controller="CheckIn" asp-action="Create" method="post">
+        <input type="hidden" name="customerId" value="@c.Id" />
+        <button class="btn btn-fitbook btn-lg">Odbavit vstup</button>
+    </form>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header fw-semibold">Permanentky</div>
+            <table class="table mb-0 align-middle">
+                <thead><tr><th>Permanentka</th><th>Platnost</th><th>Vstupy</th><th>Cena</th><th></th></tr></thead>
+                <tbody>
+                @foreach (var m in c.Memberships)
+                {
+                    <tr>
+                        <td>@m.Plan.Name</td>
+                        <td>@m.ValidFrom.ToString("d. M. yyyy") – @m.ValidTo.ToString("d. M. yyyy")</td>
+                        <td>@(m.RemainingEntries?.ToString() ?? "neomezeně")</td>
+                        <td>@m.PricePaid.ToString("N0") Kč</td>
+                        <td>
+                            @if (m.IsValidOn(Model.Today)) { <span class="badge text-bg-success">platná</span> }
+                            else if (m.ValidFrom > Model.Today) { <span class="badge text-bg-info">čeká</span> }
+                            else { <span class="badge text-bg-secondary">neplatná</span> }
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <form asp-action="Sell" asp-route-id="@c.Id" method="post" class="card card-body mb-4">
+            <label for="planId" class="form-label fw-semibold">Prodat permanentku</label>
+            <select id="planId" name="planId" class="form-select mb-3">
+                @foreach (var p in Model.Plans)
+                {
+                    <option value="@p.Id">@p.Name – @p.Price.ToString("N0") Kč</option>
+                }
+            </select>
+            <button class="btn btn-outline-primary">Prodat</button>
+        </form>
+        <div class="card">
+            <div class="card-header fw-semibold">Poslední vstupy</div>
+            <ul class="list-group list-group-flush">
+                @foreach (var ch in c.CheckIns)
+                {
+                    <li class="list-group-item small">@Clock.ToLocal(ch.AtUtc).ToString("d. M. yyyy HH:mm")</li>
+                }
+                @if (c.CheckIns.Count == 0) { <li class="list-group-item text-muted small">Zatím žádné.</li> }
+            </ul>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,71 @@
+:root {
+  --fitbook: #5b4bdb;
+  --fitbook-dark: #4537b8;
+}
+
+html {
+  font-size: 15px;
+}
+
+body {
+  background: #f5f5fa;
+}
+
+.bg-fitbook {
+  background-color: var(--fitbook) !important;
+}
+
+.btn-fitbook {
+  background: var(--fitbook);
+  border-color: var(--fitbook);
+  color: #fff;
+}
+
+.btn-fitbook:hover,
+.btn-fitbook:focus {
+  background: var(--fitbook-dark);
+  border-color: var(--fitbook-dark);
+  color: #fff;
+}
+
+.card {
+  border: 1px solid #e6e4ef;
+  box-shadow: 0 1px 2px rgb(16 12 40 / 5%);
+}
+
+.kpi .display-6 {
+  color: #1d1a33;
+}
+
+.hour-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  height: 140px;
+}
+
+.hour-chart .bar {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.hour-chart .fill {
+  width: 100%;
+  min-height: 2px;
+  background: var(--fitbook);
+  border-radius: 3px 3px 0 0;
+}
+
+.hour-chart span {
+  font-size: 0.7rem;
+  color: #8a87a0;
+}
+
+table.bg-white {
+  border-radius: 8px;
+  overflow: hidden;
+}

@@ -1,0 +1,100 @@
+﻿@model DashboardViewModel
+@{
+    ViewData["Title"] = "Přehled";
+    var maxHour = Math.Max(1, Model.Stats.CheckInsByHour.Max());
+}
+
+<h1 class="h3 mb-4">Přehled <small class="text-muted">@Model.Today.ToString("dddd d. M. yyyy")</small></h1>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card kpi"><div class="card-body">
+            <div class="text-muted small">Aktivní členové</div>
+            <div class="display-6 fw-bold">@Model.Stats.ActiveMembers</div>
+        </div></div>
+    </div>
+    <div class="col-md-4">
+        <div class="card kpi"><div class="card-body">
+            <div class="text-muted small">Vstupy dnes</div>
+            <div class="display-6 fw-bold">@Model.Stats.CheckInsToday</div>
+        </div></div>
+    </div>
+    <div class="col-md-4">
+        <div class="card kpi"><div class="card-body">
+            <div class="text-muted small">Tržby tento měsíc</div>
+            <div class="display-6 fw-bold">@Model.Stats.RevenueThisMonth.ToString("N0") Kč</div>
+        </div></div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-7">
+        <div class="card h-100">
+            <div class="card-header fw-semibold">Dnešní lekce <span class="text-muted small">(z FitBook API)</span></div>
+            @if (Model.Lessons is null)
+            {
+                <div class="card-body text-muted">FitBook API není dostupné – rozvrh se nezobrazí, zbytek administrace funguje.</div>
+            }
+            else if (Model.Lessons.Count == 0)
+            {
+                <div class="card-body text-muted">Dnes nejsou žádné lekce.</div>
+            }
+            else
+            {
+                <table class="table mb-0 align-middle">
+                    <thead><tr><th>Čas</th><th>Lekce</th><th>Sál</th><th>Obsazenost</th></tr></thead>
+                    <tbody>
+                    @foreach (var l in Model.Lessons)
+                    {
+                        var pct = l.Capacity == 0 ? 0 : 100 * l.Booked / l.Capacity;
+                        <tr>
+                            <td>@l.StartsAt.ToString("HH:mm")</td>
+                            <td>@l.TypeName <div class="small text-muted">@l.Instructor</div></td>
+                            <td>@l.Room</td>
+                            <td style="min-width:140px">
+                                <div class="progress" role="progressbar" aria-valuenow="@pct" aria-valuemin="0" aria-valuemax="100">
+                                    <div class="progress-bar bg-fitbook" style="width:@pct%"></div>
+                                </div>
+                                <span class="small">@l.Booked / @l.Capacity</span>
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            }
+        </div>
+    </div>
+    <div class="col-lg-5">
+        <div class="card mb-4">
+            <div class="card-header fw-semibold">Vstupy podle hodin</div>
+            <div class="card-body">
+                <div class="hour-chart" aria-label="Počet vstupů v jednotlivých hodinách">
+                    @for (var h = 6; h <= 22; h++)
+                    {
+                        var count = Model.Stats.CheckInsByHour[h];
+                        <div class="bar" title="@h:00 – @count vstupů">
+                            <div class="fill" style="height:@(100 * count / maxHour)%"></div>
+                            <span>@h</span>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header fw-semibold">Brzy vyprší (7 dní)</div>
+            <ul class="list-group list-group-flush">
+                @foreach (var m in Model.Stats.ExpiringSoon)
+                {
+                    <li class="list-group-item d-flex justify-content-between">
+                        <a asp-controller="Customers" asp-action="Details" asp-route-id="@m.CustomerId">@m.Customer.Name</a>
+                        <span class="text-muted small">@m.Plan.Name · @m.ValidTo.ToString("d. M.")</span>
+                    </li>
+                }
+                @if (Model.Stats.ExpiringSoon.Count == 0)
+                {
+                    <li class="list-group-item text-muted">Nic nevyprší.</li>
+                }
+            </ul>
+        </div>
+    </div>
+</div>
